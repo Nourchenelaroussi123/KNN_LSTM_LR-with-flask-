@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédictions LSTM - Coca-Cola Theme</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body style="background-color: #e4002b; color: #ffffff; font-family: 'Arial', sans-serif; margin: 0; padding: 0;">
+    <h1 style="color: #ffffff; text-align: center; margin-top: 20px;">Prédictions LSTM</h1>
+    
+    <form id="dateForm" style="text-align: center; margin: 20px;">
+        <label for="start_date" style="color: #ffffff;">Date de début:</label>
+        <input type="date" id="start_date" name="start_date" required>
+
+        <label for="end_date" style="color: #ffffff;">Date de fin:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <p id="dateErrorMessage" style="color: #ffffff;"></p>
+
+        <button type="button" onclick="getPredictions()" style="background-color: #000000; color: #ffffff; border: none; padding: 10px 20px; cursor: pointer;">Afficher les prédictions</button>
+    </form>
+
+    <canvas id="predictionChart" width="800" height="400" style="display: block; margin: 20px auto; background-color: #ffffff;"></canvas>
+
+    <script>
+        // Set the default value of the start_date input field to today's date
+        document.getElementById("start_date").valueAsDate = new Date();
+
+        function getPredictions() {
+            var startDate = document.getElementById("start_date").value;
+            var endDate = document.getElementById("end_date").value;
+
+            // Validate start and end dates
+            if (!isValidDate(startDate) || !isValidDate(endDate)) {
+                alert("Veuillez sélectionner des dates valides.");
+                return;
+            }
+
+            if (new Date(endDate) < new Date(startDate)) {
+                document.getElementById("dateErrorMessage").innerText = "La date de fin ne peut pas être antérieure à la date de début. Veuillez choisir une date ultérieure.";
+                return;
+            } else {
+                document.getElementById("dateErrorMessage").innerText = "";
+            }
+
+            fetch('/predict_lstm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'start_date': startDate,
+                    'end_date': endDate,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateChart(data);
+            });
+        }
+
+        function updateChart(predictions) {
+            var ctx = document.getElementById('predictionChart').getContext('2d');
+
+            if (window.myChart) {
+                // If the chart already exists, destroy it before creating a new one
+                window.myChart.destroy();
+            }
+
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: predictions.dates,
+                    datasets: [{
+                        label: 'Valeurs prédites',
+                        data: predictions.values,
+                        fill: false,
+                        borderColor: '#e4002b', // Coca-Cola red color
+                        tension: 0.1,
+                    }],
+                },
+            });
+        }
+
+        function isValidDate(dateString) {
+            var regex = /^\d{4}-\d{2}-\d{2}$/;
+            return regex.test(dateString);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNN Model Deployment</title>
+</head>
+<body>
+    <h1>KNN Model Deployment</h1>
+
+    <!-- Form for prediction -->
+    <form method="post" action="/predict_knn">
+        <label for="High">High:</label>
+        <input type="text" name="High" id="High" required>
+
+        <label for="Low">Low:</label>
+        <input type="text" name="Low" id="Low" required>
+
+        <label for="Open_Price">Open Price:</label>
+        <input type="text" name="Open_Price" id="Open_Price" required>
+
+        <!-- Remove the 'Adj_Close' and 'Volume' input fields -->
+        <!-- <label for="Adj_Close">Adj Close:</label>
+        <input type="text" name="Adj_Close" id="Adj_Close" required>
+
+        <label for="Volume">Volume:</label>
+        <input type="text" name="Volume" id="Volume" required> -->
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <!-- Display the prediction if available -->
+    {% if prediction %}
+        <p>Prediction: {{ prediction }}</p>
+    {% endif %}
+
+    <!-- Display an error if it occurs -->
+    {% if error %}
+        <p>Error: {{ error }}</p>
+    {% endif %}
+</body>
+</html>

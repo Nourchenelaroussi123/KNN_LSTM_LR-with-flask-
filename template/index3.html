@@ -1,0 +1,30 @@
+<!-- templates/index3.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression Model Deployment</title>
+</head>
+<body>
+    <h1>Linear Regression Model Deployment</h1>
+
+    <!-- Form for prediction -->
+    <form method="post" action="/predict_lr">
+        <label for="Stock_Price">Stock Price:</label>
+        <input type="text" name="Stock_Price" id="Stock_Price" required>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <!-- Display the prediction if available -->
+    {% if prediction_lr %}
+        <p>Prediction: {{ prediction_lr }}</p>
+    {% endif %}
+
+    <!-- Display an error if it occurs -->
+    {% if error_lr %}
+        <p>Error: {{ error_lr }}</p>
+    {% endif %}
+</body>
+</html>
